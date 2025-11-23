@@ -21,9 +21,7 @@ export default function ToastProvider() {
         color: '#ffffff',
         border: '1px solid #3a3a3a',
       }}
-      progressStyle={{
-        background: '#9a86ff',
-      }}
+      progressClassName="toast-progress-bar"
     />
   )
 }
