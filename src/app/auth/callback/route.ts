@@ -28,6 +28,7 @@ export async function GET(request: Request) {
         const insertData: any = {
           id: data.user.id,
           display_name: displayName,
+          email: data.user.email, // Store email for username-based login
         }
         
         // Only add username if it's valid and matches the constraint
@@ -44,6 +45,7 @@ export async function GET(request: Request) {
           // Try to update if insert fails (might already exist)
           const updateData: any = {
             display_name: displayName,
+            email: data.user.email,
           }
           if (username && /^[A-Za-z0-9_]{3,30}$/.test(username)) {
             updateData.username = username
@@ -57,6 +59,7 @@ export async function GET(request: Request) {
         // Update existing profile with latest metadata
         const updateData: any = {
           display_name: displayName || existingProfile.display_name,
+          email: data.user.email, // Always update email
         }
         // Only update username if it's valid
         if (username && /^[A-Za-z0-9_]{3,30}$/.test(username)) {

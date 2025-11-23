@@ -162,6 +162,7 @@ export default function LoginPage() {
             const insertData: any = {
               id: user.id,
               display_name: displayName,
+              email: user.email,
             }
             
             // Only add username if it's valid and matches the constraint

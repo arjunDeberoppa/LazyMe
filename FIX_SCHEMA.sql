@@ -13,8 +13,21 @@ CHECK (
   OR username ~ '^[A-Za-z0-9_]{3,30}$'
 );
 
--- Note: The email column is not in your schema, so we've removed it from the code
--- If you want to add email column, run:
--- ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS email text;
--- CREATE INDEX IF NOT EXISTS idx_profiles_email ON public.profiles (email);
+-- IMPORTANT: Add email column to profiles for username-based login
+-- This is required for the login functionality to work with usernames
+ALTER TABLE public.profiles 
+ADD COLUMN IF NOT EXISTS email text;
+
+CREATE INDEX IF NOT EXISTS idx_profiles_email 
+ON public.profiles (email);
+
+-- Update existing profiles with email from auth.users (if any exist)
+-- This is a one-time migration
+UPDATE public.profiles p
+SET email = (
+  SELECT email 
+  FROM auth.users u 
+  WHERE u.id = p.id
+)
+WHERE p.email IS NULL;
 
