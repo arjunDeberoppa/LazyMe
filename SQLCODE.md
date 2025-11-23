@@ -133,3 +133,31 @@ create policy "Users can manage their own todo links"
   for all
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
+
+
+-- ==========================================
+-- Username support for authentication
+-- ==========================================
+
+-- 1) Add username and email columns to profiles
+alter table profiles
+add column if not exists username text;
+
+alter table profiles
+add column if not exists email text;
+
+-- 2) Enforce username rules
+alter table profiles
+drop constraint if exists username_format_check;
+
+alter table profiles
+add constraint username_format_check
+check (username is null or username ~ '^[A-Za-z0-9_]{3,30}$');
+
+-- 3) Make usernames unique (case-insensitive)
+create unique index if not exists profiles_username_unique
+on profiles (lower(username));
+
+-- 4) Create index on email for faster lookups
+create index if not exists idx_profiles_email
+on profiles (email);
