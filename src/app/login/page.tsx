@@ -78,17 +78,26 @@ export default function LoginPage() {
 
     try {
       // Hash the password server-side before storing
-      const hashResponse = await fetch('/api/hash-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
-      })
+      let password_hash: string | null = null
+      try {
+        const hashResponse = await fetch('/api/hash-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password }),
+        })
 
-      if (!hashResponse.ok) {
-        throw new Error('Failed to process password')
+        if (!hashResponse.ok) {
+          const errorData = await hashResponse.json().catch(() => ({ error: 'Unknown error' }))
+          throw new Error(errorData.error || 'Failed to process password')
+        }
+
+        const data = await hashResponse.json()
+        password_hash = data.password_hash
+      } catch (hashError: any) {
+        console.error('Password hashing error:', hashError)
+        // Continue without hash if hashing fails (optional feature)
+        toast.error('Password hashing failed, but signup will continue')
       }
-
-      const { password_hash } = await hashResponse.json()
 
       // Sign up with email and password
       // Store username and password hash in user metadata so we can create profile after verification
