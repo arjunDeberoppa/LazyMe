@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import { toast } from 'react-toastify'
 
 export default function LoginPage() {
   const [isSignup, setIsSignup] = useState(false)
@@ -14,7 +15,6 @@ export default function LoginPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isMagicLink, setIsMagicLink] = useState(true)
   const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState('')
   const router = useRouter()
   const supabase = createClient()
 
@@ -47,10 +47,9 @@ export default function LoginPage() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setMessage('')
 
     if (!username.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
-      setMessage('Please fill in all fields')
+      toast.error('Please fill in all fields')
       setLoading(false)
       return
     }
@@ -58,21 +57,21 @@ export default function LoginPage() {
     // Validate username format
     const usernameRegex = /^[A-Za-z0-9_]{3,30}$/
     if (!usernameRegex.test(username)) {
-      setMessage('Username must be 3-30 characters and contain only letters, numbers, and underscores')
+      toast.error('Username must be 3-30 characters and contain only letters, numbers, and underscores')
       setLoading(false)
       return
     }
 
     // Validate password match
     if (password !== confirmPassword) {
-      setMessage('Passwords do not match')
+      toast.error('Passwords do not match')
       setLoading(false)
       return
     }
 
     // Validate password length
     if (password.length < 6) {
-      setMessage('Password must be at least 6 characters')
+      toast.error('Password must be at least 6 characters')
       setLoading(false)
       return
     }
@@ -106,10 +105,10 @@ export default function LoginPage() {
           // Still proceed as the user is created
         }
 
-        setMessage('Account created! Please check your email to verify your account.')
+        toast.success('Verify your email! An email has been sent to you to verify your account.')
       }
     } catch (error: any) {
-      setMessage(error.message || 'An error occurred during signup')
+      toast.error(error.message || 'An error occurred during signup')
     } finally {
       setLoading(false)
     }
@@ -118,7 +117,6 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setMessage('')
 
     try {
       let loginEmail = email
@@ -147,18 +145,19 @@ export default function LoginPage() {
           },
         })
         if (error) throw error
-        setMessage('Check your email for the login link!')
+        toast.success('Check your email! A login link has been sent to you.')
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email: loginEmail,
           password,
         })
         if (error) throw error
+        toast.success('Login successful!')
         router.push('/')
         router.refresh()
       }
     } catch (error: any) {
-      setMessage(error.message || 'An error occurred')
+      toast.error(error.message || 'An error occurred')
     } finally {
       setLoading(false)
     }
@@ -173,7 +172,6 @@ export default function LoginPage() {
           <button
             onClick={() => {
               setIsSignup(false)
-              setMessage('')
               setEmail('')
               setUsername('')
               setPassword('')
@@ -191,7 +189,6 @@ export default function LoginPage() {
           <button
             onClick={() => {
               setIsSignup(true)
-              setMessage('')
               setEmail('')
               setUsername('')
               setPassword('')
@@ -414,12 +411,6 @@ export default function LoginPage() {
             </button>
           )}
         </form>
-
-        {message && (
-          <p className={`mt-4 text-sm ${message.toLowerCase().includes('error') || message.toLowerCase().includes('not found') ? 'text-red-400' : 'text-green-400'}`}>
-            {message}
-          </p>
-        )}
       </div>
     </div>
   )
