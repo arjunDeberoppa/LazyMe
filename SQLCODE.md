@@ -163,30 +163,13 @@ create index if not exists idx_profiles_email
 on profiles (email);
 
 -- ==========================================
--- Automatic Profile Creation Trigger
+-- IMPORTANT: If you previously created a trigger, drop it:
 -- ==========================================
+-- DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+-- DROP FUNCTION IF EXISTS public.handle_new_user();
 
--- Function to automatically create profile when user is created/verified
-create or replace function public.handle_new_user()
-returns trigger as $$
-begin
-  insert into public.profiles (id, email, username, display_name)
-  values (
-    new.id,
-    new.email,
-    coalesce(new.raw_user_meta_data->>'username', null),
-    coalesce(new.raw_user_meta_data->>'display_name', new.raw_user_meta_data->>'username', split_part(new.email, '@', 1), null)
-  )
-  on conflict (id) do update
-  set
-    email = coalesce(excluded.email, profiles.email),
-    username = coalesce(excluded.username, profiles.username),
-    display_name = coalesce(excluded.display_name, profiles.display_name);
-  return new;
-end;
-$$ language plpgsql security definer;
-
--- Trigger to create profile when user signs up (after email verification)
-create trigger on_auth_user_created
-  after insert or update on auth.users
-  for each row execute procedure public.handle_new_user();
+-- ==========================================
+-- Note: Profile creation is handled in the auth callback route
+-- after email verification. No database trigger is needed.
+-- The callback route will create the profile automatically.
+-- ==========================================

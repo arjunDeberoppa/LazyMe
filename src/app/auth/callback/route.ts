@@ -15,20 +15,46 @@ export async function GET(request: Request) {
       const displayName = data.user.user_metadata?.display_name || username || data.user.email?.split('@')[0] || null
 
       // Create or update profile with username and email after verification
-      const { error: profileError } = await supabase
+      // Check if profile already exists first
+      const { data: existingProfile } = await supabase
         .from('profiles')
-        .upsert({
-          id: data.user.id,
-          username: username,
-          display_name: displayName,
-          email: data.user.email,
-        }, {
-          onConflict: 'id',
-        })
+        .select('id')
+        .eq('id', data.user.id)
+        .single()
 
-      if (profileError) {
-        console.error('Error creating/updating profile:', profileError)
-        // Log the error but don't block the redirect
+      if (!existingProfile) {
+        // Only create if it doesn't exist to avoid conflicts
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: data.user.id,
+            username: username,
+            display_name: displayName,
+            email: data.user.email,
+          })
+
+        if (profileError) {
+          console.error('Error creating profile:', profileError)
+          // Try to update if insert fails (might already exist)
+          await supabase
+            .from('profiles')
+            .update({
+              username: username,
+              display_name: displayName,
+              email: data.user.email,
+            })
+            .eq('id', data.user.id)
+        }
+      } else {
+        // Update existing profile with latest metadata
+        await supabase
+          .from('profiles')
+          .update({
+            username: username || existingProfile.username,
+            display_name: displayName || existingProfile.display_name,
+            email: data.user.email || existingProfile.email,
+          })
+          .eq('id', data.user.id)
       }
 
       const forwardedHost = request.headers.get('x-forwarded-host') // original origin before load balancer
