@@ -159,12 +159,17 @@ export default function LoginPage() {
             const username = user.user_metadata?.username || null
             const displayName = user.user_metadata?.display_name || username || user.email?.split('@')[0] || null
 
-            await supabase.from('profiles').upsert({
+            const insertData: any = {
               id: user.id,
-              username: username,
               display_name: displayName,
-              email: user.email,
-            })
+            }
+            
+            // Only add username if it's valid and matches the constraint
+            if (username && /^[A-Za-z0-9_]{3,30}$/.test(username)) {
+              insertData.username = username
+            }
+
+            await supabase.from('profiles').insert(insertData)
           }
         }
 

@@ -24,36 +24,47 @@ export async function GET(request: Request) {
 
       if (!existingProfile) {
         // Only create if it doesn't exist to avoid conflicts
+        // Only insert username if it's valid (not null and matches format)
+        const insertData: any = {
+          id: data.user.id,
+          display_name: displayName,
+        }
+        
+        // Only add username if it's valid and matches the constraint
+        if (username && /^[A-Za-z0-9_]{3,30}$/.test(username)) {
+          insertData.username = username
+        }
+
         const { error: profileError } = await supabase
           .from('profiles')
-          .insert({
-            id: data.user.id,
-            username: username,
-            display_name: displayName,
-            email: data.user.email,
-          })
+          .insert(insertData)
 
         if (profileError) {
           console.error('Error creating profile:', profileError)
           // Try to update if insert fails (might already exist)
+          const updateData: any = {
+            display_name: displayName,
+          }
+          if (username && /^[A-Za-z0-9_]{3,30}$/.test(username)) {
+            updateData.username = username
+          }
           await supabase
             .from('profiles')
-            .update({
-              username: username,
-              display_name: displayName,
-              email: data.user.email,
-            })
+            .update(updateData)
             .eq('id', data.user.id)
         }
       } else {
         // Update existing profile with latest metadata
+        const updateData: any = {
+          display_name: displayName || existingProfile.display_name,
+        }
+        // Only update username if it's valid
+        if (username && /^[A-Za-z0-9_]{3,30}$/.test(username)) {
+          updateData.username = username
+        }
         await supabase
           .from('profiles')
-          .update({
-            username: username || existingProfile.username,
-            display_name: displayName || existingProfile.display_name,
-            email: data.user.email || existingProfile.email,
-          })
+          .update(updateData)
           .eq('id', data.user.id)
       }
 
