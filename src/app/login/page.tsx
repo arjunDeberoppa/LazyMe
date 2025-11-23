@@ -78,33 +78,23 @@ export default function LoginPage() {
 
     try {
       // Sign up with email and password
+      // Store username in user metadata so we can create profile after verification
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
+          data: {
+            username: username.toLowerCase(),
+            display_name: username,
+          },
         },
       })
 
       if (authError) throw authError
 
       if (authData.user) {
-        // Create profile with username and email
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .upsert({
-            id: authData.user.id,
-            username: username.toLowerCase(),
-            display_name: username,
-            email: email, // Store email for username lookup
-          })
-
-        if (profileError) {
-          // If profile creation fails, we might need to handle it
-          console.error('Profile creation error:', profileError)
-          // Still proceed as the user is created
-        }
-
+        // Profile will be created after email verification in the callback
         toast.success('Verify your email! An email has been sent to you to verify your account.')
       }
     } catch (error: any) {
@@ -147,11 +137,37 @@ export default function LoginPage() {
         if (error) throw error
         toast.success('Check your email! A login link has been sent to you.')
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { error: signInError } = await supabase.auth.signInWithPassword({
           email: loginEmail,
           password,
         })
-        if (error) throw error
+        if (signInError) throw signInError
+
+        // Ensure profile exists (fallback in case it wasn't created during verification)
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
+        if (user) {
+          const { data: existingProfile } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('id', user.id)
+            .single()
+
+          if (!existingProfile) {
+            // Create profile if it doesn't exist
+            const username = user.user_metadata?.username || null
+            const displayName = user.user_metadata?.display_name || username || user.email?.split('@')[0] || null
+
+            await supabase.from('profiles').upsert({
+              id: user.id,
+              username: username,
+              display_name: displayName,
+              email: user.email,
+            })
+          }
+        }
+
         toast.success('Login successful!')
         router.push('/')
         router.refresh()
