@@ -31,3 +31,9 @@ SET email = (
 )
 WHERE p.email IS NULL;
 
+-- Add password_hash column to profiles table
+-- Note: This stores a hash of the password for additional verification if needed
+-- The actual password is already securely stored in auth.users by Supabase
+ALTER TABLE public.profiles 
+ADD COLUMN IF NOT EXISTS password_hash text;
+

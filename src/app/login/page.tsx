@@ -77,8 +77,21 @@ export default function LoginPage() {
     }
 
     try {
+      // Hash the password server-side before storing
+      const hashResponse = await fetch('/api/hash-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      })
+
+      if (!hashResponse.ok) {
+        throw new Error('Failed to process password')
+      }
+
+      const { password_hash } = await hashResponse.json()
+
       // Sign up with email and password
-      // Store username in user metadata so we can create profile after verification
+      // Store username and password hash in user metadata so we can create profile after verification
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
@@ -87,6 +100,7 @@ export default function LoginPage() {
           data: {
             username: username.toLowerCase(),
             display_name: username,
+            password_hash: password_hash, // Store hash in metadata temporarily
           },
         },
       })

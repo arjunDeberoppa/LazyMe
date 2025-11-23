@@ -10,9 +10,10 @@ export async function GET(request: Request) {
     const supabase = await createClient()
     const { data, error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error && data.user) {
-      // Get username from user metadata (stored during signup)
+      // Get username and password hash from user metadata (stored during signup)
       const username = data.user.user_metadata?.username || null
       const displayName = data.user.user_metadata?.display_name || username || data.user.email?.split('@')[0] || null
+      const passwordHash = data.user.user_metadata?.password_hash || null
 
       // Create or update profile with username and email after verification
       // Check if profile already exists first
@@ -29,6 +30,7 @@ export async function GET(request: Request) {
           id: data.user.id,
           display_name: displayName,
           email: data.user.email, // Store email for username-based login
+          password_hash: passwordHash, // Store password hash
         }
         
         // Only add username if it's valid and matches the constraint
@@ -46,6 +48,7 @@ export async function GET(request: Request) {
           const updateData: any = {
             display_name: displayName,
             email: data.user.email,
+            password_hash: passwordHash,
           }
           if (username && /^[A-Za-z0-9_]{3,30}$/.test(username)) {
             updateData.username = username
@@ -64,6 +67,10 @@ export async function GET(request: Request) {
         // Only update username if it's valid
         if (username && /^[A-Za-z0-9_]{3,30}$/.test(username)) {
           updateData.username = username
+        }
+        // Update password hash if available
+        if (passwordHash) {
+          updateData.password_hash = passwordHash
         }
         await supabase
           .from('profiles')
