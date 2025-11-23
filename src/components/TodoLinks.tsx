@@ -96,7 +96,7 @@ export default function TodoLinks({ todoId, onUpdate }: TodoLinksProps) {
         <h3 className="text-lg font-semibold text-white">Links</h3>
         <button
           onClick={() => setShowAddForm(!showAddForm)}
-          className="rounded-md px-3 py-1 text-sm font-medium text-white"
+          className="cursor-pointer rounded-md px-3 py-1 text-sm font-medium text-white"
           style={{ backgroundColor: '#01aaff' }}
         >
           {showAddForm ? 'Cancel' : '+ Add Link'}
@@ -124,7 +124,7 @@ export default function TodoLinks({ todoId, onUpdate }: TodoLinksProps) {
           />
           <button
             onClick={handleAddLink}
-            className="w-full rounded-md px-4 py-2 font-medium text-white"
+            className="w-full cursor-pointer rounded-md px-4 py-2 font-medium text-white"
             style={{ backgroundColor: '#01eab9' }}
           >
             Add Link
@@ -157,7 +157,7 @@ export default function TodoLinks({ todoId, onUpdate }: TodoLinksProps) {
                   </a>
                   <button
                     onClick={() => handleDeleteLink(link.id)}
-                    className="text-sm text-red-400 hover:text-red-300"
+                    className="cursor-pointer text-sm text-red-400 hover:text-red-300"
                   >
                     Delete
                   </button>

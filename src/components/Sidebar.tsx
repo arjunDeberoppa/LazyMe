@@ -124,7 +124,7 @@ export default function Sidebar({
         <h1 className="text-xl font-bold text-white">LazyMe</h1>
         <button
           onClick={handleLogout}
-          className="rounded px-2 py-1 text-sm text-gray-400 hover:text-white"
+          className="cursor-pointer rounded px-2 py-1 text-sm text-gray-400 hover:text-white"
         >
           Logout
         </button>
@@ -146,7 +146,7 @@ export default function Sidebar({
               onCategorySelect(null)
               onTodoSelect(null)
             }}
-            className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
+            className={`w-full cursor-pointer rounded-md px-3 py-2 text-left text-sm transition-colors ${
               selectedCategoryId === null
                 ? 'text-white'
                 : 'text-gray-400 hover:text-white'
@@ -166,7 +166,7 @@ export default function Sidebar({
             <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-500">Categories</h2>
             <button
               onClick={() => setShowNewCategory(!showNewCategory)}
-              className="text-xs text-gray-400 hover:text-white"
+              className="cursor-pointer text-xs text-gray-400 hover:text-white"
             >
               {showNewCategory ? 'Cancel' : '+'}
             </button>
@@ -185,7 +185,7 @@ export default function Sidebar({
               />
               <button
                 onClick={handleCreateCategory}
-                className="rounded-md px-2 py-1 text-sm text-white"
+                className="cursor-pointer rounded-md px-2 py-1 text-sm text-white"
                 style={{ backgroundColor: '#9a86ff' }}
               >
                 Add
@@ -199,7 +199,7 @@ export default function Sidebar({
                 onCategorySelect(category.id)
                 onTodoSelect(null)
               }}
-              className={`mb-1 w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
+              className={`mb-1 w-full cursor-pointer rounded-md px-3 py-2 text-left text-sm transition-colors ${
                 selectedCategoryId === category.id
                   ? 'text-white'
                   : 'text-gray-400 hover:text-white'
@@ -230,7 +230,7 @@ export default function Sidebar({
                 <button
                   key={todo.id}
                   onClick={() => onTodoSelect(todo.id)}
-                  className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
+                  className={`w-full cursor-pointer rounded-md px-3 py-2 text-left text-sm transition-colors ${
                     selectedTodoId === todo.id
                       ? 'text-white'
                       : 'text-gray-400 hover:text-white'

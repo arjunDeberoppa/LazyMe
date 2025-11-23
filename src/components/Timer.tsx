@@ -142,7 +142,7 @@ export default function Timer({ initialSeconds, presetMinutes, onComplete }: Tim
           <button
             onClick={handleStart}
             disabled={seconds === 0}
-            className="rounded-md px-4 py-2 font-medium text-white disabled:opacity-50"
+            className="cursor-pointer rounded-md px-4 py-2 font-medium text-white disabled:opacity-50 disabled:cursor-not-allowed"
             style={{ backgroundColor: '#01eab9' }}
           >
             Start
@@ -151,7 +151,7 @@ export default function Timer({ initialSeconds, presetMinutes, onComplete }: Tim
         {isRunning && (
           <button
             onClick={handlePause}
-            className="rounded-md px-4 py-2 font-medium text-white"
+            className="cursor-pointer rounded-md px-4 py-2 font-medium text-white"
             style={{ backgroundColor: '#ff7800' }}
           >
             Pause
@@ -161,14 +161,14 @@ export default function Timer({ initialSeconds, presetMinutes, onComplete }: Tim
           <>
             <button
               onClick={handleResume}
-              className="rounded-md px-4 py-2 font-medium text-white"
+              className="cursor-pointer rounded-md px-4 py-2 font-medium text-white"
               style={{ backgroundColor: '#01eab9' }}
             >
               Resume
             </button>
             <button
               onClick={handleReset}
-              className="rounded-md px-4 py-2 font-medium text-white"
+              className="cursor-pointer rounded-md px-4 py-2 font-medium text-white"
               style={{ backgroundColor: '#242424' }}
             >
               Reset
@@ -178,7 +178,7 @@ export default function Timer({ initialSeconds, presetMinutes, onComplete }: Tim
         {!isRunning && !isPaused && seconds > 0 && (
           <button
             onClick={handleReset}
-            className="rounded-md px-4 py-2 font-medium text-white"
+            className="cursor-pointer rounded-md px-4 py-2 font-medium text-white"
             style={{ backgroundColor: '#242424' }}
           >
             Reset
@@ -193,7 +193,7 @@ export default function Timer({ initialSeconds, presetMinutes, onComplete }: Tim
             <button
               key={preset}
               onClick={() => handlePreset(preset)}
-              className="rounded-md px-3 py-1 text-sm font-medium text-white"
+              className="cursor-pointer rounded-md px-3 py-1 text-sm font-medium text-white"
               style={{ backgroundColor: '#9a86ff' }}
             >
               {preset}
@@ -243,7 +243,7 @@ export default function Timer({ initialSeconds, presetMinutes, onComplete }: Tim
               const seconds = parseInt(secondsInput?.value) || 0
               handleCustomTime(minutes, seconds)
             }}
-            className="rounded-md px-4 py-2 text-sm font-medium text-white"
+            className="cursor-pointer rounded-md px-4 py-2 text-sm font-medium text-white"
             style={{ backgroundColor: '#01aaff' }}
           >
             Set

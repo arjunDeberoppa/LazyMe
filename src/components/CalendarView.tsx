@@ -87,7 +87,7 @@ export default function CalendarView({ onTodoSelect, onCreateTodo }: CalendarVie
           <div className="flex gap-2">
             <button
               onClick={() => setViewMode('month')}
-              className={`rounded-md px-4 py-2 text-sm font-medium ${
+              className={`cursor-pointer rounded-md px-4 py-2 text-sm font-medium ${
                 viewMode === 'month' ? 'text-white' : 'text-gray-400'
               }`}
               style={viewMode === 'month' ? { backgroundColor: '#9a86ff' } : { backgroundColor: '#2b2b2b' }}
@@ -96,7 +96,7 @@ export default function CalendarView({ onTodoSelect, onCreateTodo }: CalendarVie
             </button>
             <button
               onClick={() => setViewMode('week')}
-              className={`rounded-md px-4 py-2 text-sm font-medium ${
+              className={`cursor-pointer rounded-md px-4 py-2 text-sm font-medium ${
                 viewMode === 'week' ? 'text-white' : 'text-gray-400'
               }`}
               style={viewMode === 'week' ? { backgroundColor: '#9a86ff' } : { backgroundColor: '#2b2b2b' }}
@@ -107,21 +107,21 @@ export default function CalendarView({ onTodoSelect, onCreateTodo }: CalendarVie
           <div className="flex items-center gap-2">
             <button
               onClick={handlePreviousMonth}
-              className="rounded-md px-3 py-2 text-white"
+              className="cursor-pointer rounded-md px-3 py-2 text-white"
               style={{ backgroundColor: '#242424' }}
             >
               ←
             </button>
             <button
               onClick={handleToday}
-              className="rounded-md px-4 py-2 text-sm font-medium text-white"
+              className="cursor-pointer rounded-md px-4 py-2 text-sm font-medium text-white"
               style={{ backgroundColor: '#01aaff' }}
             >
               Today
             </button>
             <button
               onClick={handleNextMonth}
-              className="rounded-md px-3 py-2 text-white"
+              className="cursor-pointer rounded-md px-3 py-2 text-white"
               style={{ backgroundColor: '#242424' }}
             >
               →
@@ -175,7 +175,7 @@ export default function CalendarView({ onTodoSelect, onCreateTodo }: CalendarVie
                     <button
                       key={todo.id}
                       onClick={() => onTodoSelect(todo.id)}
-                      className="block w-full truncate rounded px-2 py-1 text-left text-xs text-white transition-colors hover:opacity-80"
+                      className="block w-full cursor-pointer truncate rounded px-2 py-1 text-left text-xs text-white transition-colors hover:opacity-80"
                       style={{ backgroundColor: getStatusColor(todo.status) }}
                       title={todo.title}
                     >
@@ -190,7 +190,7 @@ export default function CalendarView({ onTodoSelect, onCreateTodo }: CalendarVie
                 </div>
                 <button
                   onClick={() => onCreateTodo(day)}
-                  className="mt-1 text-xs text-gray-500 hover:text-white"
+                  className="mt-1 cursor-pointer text-xs text-gray-500 hover:text-white"
                 >
                   + Add
                 </button>

@@ -96,7 +96,7 @@ export default function CreateTodo({ onTodoCreated, defaultCategoryId }: CreateT
     return (
       <button
         onClick={() => setShowForm(true)}
-        className="rounded-md px-4 py-2 font-medium text-white"
+        className="cursor-pointer rounded-md px-4 py-2 font-medium text-white"
         style={{ backgroundColor: '#01aaff' }}
       >
         + New Todo
@@ -210,7 +210,7 @@ export default function CreateTodo({ onTodoCreated, defaultCategoryId }: CreateT
         <div className="flex gap-2">
           <button
             type="submit"
-            className="flex-1 rounded-md px-4 py-2 font-medium text-white"
+            className="flex-1 cursor-pointer rounded-md px-4 py-2 font-medium text-white"
             style={{ backgroundColor: '#01eab9' }}
           >
             Create
@@ -229,7 +229,7 @@ export default function CreateTodo({ onTodoCreated, defaultCategoryId }: CreateT
                 timer_preset_minutes: '',
               })
             }}
-            className="rounded-md px-4 py-2 font-medium text-gray-300"
+            className="cursor-pointer rounded-md px-4 py-2 font-medium text-gray-300"
             style={{ backgroundColor: '#242424' }}
           >
             Cancel

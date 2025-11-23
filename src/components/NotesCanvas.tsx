@@ -159,7 +159,7 @@ export default function NotesCanvas({ todoId, onUpdate }: NotesCanvasProps) {
         <div className="flex gap-2">
           <button
             onClick={handleAddTextNote}
-            className="rounded-md px-3 py-1 text-sm font-medium text-white"
+            className="cursor-pointer rounded-md px-3 py-1 text-sm font-medium text-white"
             style={{ backgroundColor: '#01aaff' }}
           >
             + Text Note
@@ -225,7 +225,7 @@ export default function NotesCanvas({ todoId, onUpdate }: NotesCanvasProps) {
                   e.stopPropagation()
                   handleDeleteNote(note.id)
                 }}
-                className="absolute right-1 top-1 rounded bg-red-500 px-2 py-1 text-xs text-white opacity-0 transition-opacity hover:opacity-100"
+                className="absolute right-1 top-1 cursor-pointer rounded bg-red-500 px-2 py-1 text-xs text-white opacity-0 transition-opacity hover:opacity-100"
                 style={{ backgroundColor: '#ff7800' }}
               >
                 ×

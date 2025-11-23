@@ -269,7 +269,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-white"
                     tabIndex={-1}
                   >
                     {showPassword ? (
@@ -336,7 +336,7 @@ export default function LoginPage() {
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-white"
                       tabIndex={-1}
                     >
                       {showConfirmPassword ? (
@@ -392,7 +392,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-md px-4 py-2 font-medium text-white transition-colors disabled:opacity-50"
+            className="w-full cursor-pointer rounded-md px-4 py-2 font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             style={{ backgroundColor: '#9a86ff' }}
           >
             {loading
@@ -408,7 +408,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => setIsMagicLink(!isMagicLink)}
-              className="w-full text-sm text-gray-400 hover:text-gray-300"
+              className="w-full cursor-pointer text-sm text-gray-400 hover:text-gray-300"
             >
               {isMagicLink ? 'Use password instead' : 'Use magic link instead'}
             </button>

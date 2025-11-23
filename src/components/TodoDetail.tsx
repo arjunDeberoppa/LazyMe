@@ -192,7 +192,7 @@ export default function TodoDetail({ todoId, onUpdate }: TodoDetailProps) {
               <button
                 onClick={handleSave}
                 disabled={loading}
-                className="rounded-md px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+                className="cursor-pointer rounded-md px-4 py-2 text-sm font-medium text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ backgroundColor: '#01eab9' }}
               >
                 Save
@@ -202,7 +202,7 @@ export default function TodoDetail({ todoId, onUpdate }: TodoDetailProps) {
                   setEditing(false)
                   loadTodo()
                 }}
-                className="rounded-md px-4 py-2 text-sm font-medium text-gray-300"
+                className="cursor-pointer rounded-md px-4 py-2 text-sm font-medium text-gray-300"
                 style={{ backgroundColor: '#2b2b2b' }}
               >
                 Cancel
@@ -212,14 +212,14 @@ export default function TodoDetail({ todoId, onUpdate }: TodoDetailProps) {
             <>
               <button
                 onClick={() => setEditing(true)}
-                className="rounded-md px-4 py-2 text-sm font-medium text-white"
+                className="cursor-pointer rounded-md px-4 py-2 text-sm font-medium text-white"
                 style={{ backgroundColor: '#9a86ff' }}
               >
                 Edit
               </button>
               <button
                 onClick={handleDelete}
-                className="rounded-md px-4 py-2 text-sm font-medium text-white"
+                className="cursor-pointer rounded-md px-4 py-2 text-sm font-medium text-white"
                 style={{ backgroundColor: '#ff7800' }}
               >
                 Delete
