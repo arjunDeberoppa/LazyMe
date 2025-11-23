@@ -19,7 +19,7 @@ export async function GET(request: Request) {
       // Check if profile already exists first
       const { data: existingProfile } = await supabase
         .from('profiles')
-        .select('id')
+        .select('id, display_name, email, username')
         .eq('id', data.user.id)
         .single()
 
