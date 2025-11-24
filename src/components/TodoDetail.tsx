@@ -28,6 +28,7 @@ export default function TodoDetail({ todoId, onUpdate }: TodoDetailProps) {
     status: 'pending' as 'pending' | 'in_progress' | 'completed',
     priority: '' as 'low' | 'medium' | 'high' | '',
     timer_preset_minutes: '',
+    estimated_time_minutes: '',
   })
   const supabase = createClient()
 
@@ -65,6 +66,7 @@ export default function TodoDetail({ todoId, onUpdate }: TodoDetailProps) {
           status: data.status,
           priority: data.priority || '',
           timer_preset_minutes: data.timer_preset_minutes?.toString() || '',
+          estimated_time_minutes: data.estimated_time_minutes?.toString() || '',
         })
       }
     } catch (error) {
@@ -122,6 +124,7 @@ export default function TodoDetail({ todoId, onUpdate }: TodoDetailProps) {
         status: formData.status,
         priority: formData.priority || null,
         timer_preset_minutes: formData.timer_preset_minutes ? parseInt(formData.timer_preset_minutes) : null,
+        estimated_time_minutes: formData.estimated_time_minutes ? parseInt(formData.estimated_time_minutes) : null,
       }
 
       if (formData.status === 'completed' && !todo?.completed_at) {
@@ -377,22 +380,42 @@ export default function TodoDetail({ todoId, onUpdate }: TodoDetailProps) {
           )}
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">Timer Preset (minutes)</label>
-          {editing ? (
-            <input
-              type="number"
-              value={formData.timer_preset_minutes}
-              onChange={(e) => setFormData({ ...formData, timer_preset_minutes: e.target.value })}
-              className="w-full rounded-md px-4 py-2 text-white"
-              style={{ backgroundColor: '#2b2b2b', border: '1px solid #3a3a3a' }}
-              placeholder="e.g. 25"
-            />
-          ) : (
-            <p className="text-gray-300">
-              {todo.timer_preset_minutes ? `${todo.timer_preset_minutes} minutes` : 'Not set'}
-            </p>
-          )}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Timer Preset (minutes)</label>
+            {editing ? (
+              <input
+                type="number"
+                value={formData.timer_preset_minutes}
+                onChange={(e) => setFormData({ ...formData, timer_preset_minutes: e.target.value })}
+                className="w-full rounded-md px-4 py-2 text-white"
+                style={{ backgroundColor: '#2b2b2b', border: '1px solid #3a3a3a' }}
+                placeholder="e.g. 25"
+              />
+            ) : (
+              <p className="text-gray-300">
+                {todo.timer_preset_minutes ? `${todo.timer_preset_minutes} minutes` : 'Not set'}
+              </p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Estimated Time (minutes)</label>
+            {editing ? (
+              <input
+                type="number"
+                value={formData.estimated_time_minutes}
+                onChange={(e) => setFormData({ ...formData, estimated_time_minutes: e.target.value })}
+                className="w-full rounded-md px-4 py-2 text-white"
+                style={{ backgroundColor: '#2b2b2b', border: '1px solid #3a3a3a' }}
+                placeholder="e.g. 30"
+                min="0"
+              />
+            ) : (
+              <p className="text-gray-300">
+                {todo.estimated_time_minutes ? `${todo.estimated_time_minutes} minutes` : 'Not set'}
+              </p>
+            )}
+          </div>
         </div>
 
         <TodoLinks todoId={todoId} onUpdate={loadLinks} />

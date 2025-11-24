@@ -48,7 +48,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex h-full flex-col p-8">
+    <div className="flex h-full flex-col">
       <h1 className="mb-6 text-3xl font-bold text-white">Dashboard</h1>
 
       <div className="mb-8">

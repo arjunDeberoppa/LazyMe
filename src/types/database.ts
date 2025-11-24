@@ -23,6 +23,7 @@ export type Todo = {
   timer_custom_seconds: number | null
   timer_sound: string
   priority: 'low' | 'medium' | 'high' | null
+  estimated_time_minutes: number | null // Optional: estimated time to complete task
   notes_canvas?: any // JSON data for notes canvas
 }
 

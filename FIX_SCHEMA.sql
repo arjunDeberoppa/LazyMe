@@ -37,3 +37,8 @@ WHERE p.email IS NULL;
 ALTER TABLE public.profiles 
 ADD COLUMN IF NOT EXISTS password_hash text;
 
+-- Add estimated_time_minutes column to todos table
+-- Optional field for estimated time to complete the task
+ALTER TABLE public.todos 
+ADD COLUMN IF NOT EXISTS estimated_time_minutes integer;
+

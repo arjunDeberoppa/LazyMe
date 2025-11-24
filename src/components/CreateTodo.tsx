@@ -20,6 +20,7 @@ export default function CreateTodo({ onTodoCreated, defaultCategoryId }: CreateT
     scheduled_date: '',
     priority: '' as 'low' | 'medium' | 'high' | '',
     timer_preset_minutes: '',
+    estimated_time_minutes: '',
   })
   const supabase = createClient()
 
@@ -68,6 +69,9 @@ export default function CreateTodo({ onTodoCreated, defaultCategoryId }: CreateT
         timer_preset_minutes: formData.timer_preset_minutes
           ? parseInt(formData.timer_preset_minutes)
           : null,
+        estimated_time_minutes: formData.estimated_time_minutes
+          ? parseInt(formData.estimated_time_minutes)
+          : null,
         status: 'pending',
       }
 
@@ -84,6 +88,7 @@ export default function CreateTodo({ onTodoCreated, defaultCategoryId }: CreateT
         scheduled_date: '',
         priority: '',
         timer_preset_minutes: '',
+        estimated_time_minutes: '',
       })
       setShowForm(false)
       onTodoCreated()
@@ -195,16 +200,30 @@ export default function CreateTodo({ onTodoCreated, defaultCategoryId }: CreateT
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">Timer Preset (minutes)</label>
-          <input
-            type="number"
-            value={formData.timer_preset_minutes}
-            onChange={(e) => setFormData({ ...formData, timer_preset_minutes: e.target.value })}
-            className="w-full rounded-md px-4 py-2 text-white"
-            style={{ backgroundColor: '#242424', border: '1px solid #3a3a3a' }}
-            placeholder="e.g. 25"
-          />
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Timer Preset (minutes)</label>
+            <input
+              type="number"
+              value={formData.timer_preset_minutes}
+              onChange={(e) => setFormData({ ...formData, timer_preset_minutes: e.target.value })}
+              className="w-full rounded-md px-4 py-2 text-white"
+              style={{ backgroundColor: '#242424', border: '1px solid #3a3a3a' }}
+              placeholder="e.g. 25"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Estimated Time (minutes)</label>
+            <input
+              type="number"
+              value={formData.estimated_time_minutes}
+              onChange={(e) => setFormData({ ...formData, estimated_time_minutes: e.target.value })}
+              className="w-full rounded-md px-4 py-2 text-white"
+              style={{ backgroundColor: '#242424', border: '1px solid #3a3a3a' }}
+              placeholder="e.g. 30"
+              min="0"
+            />
+          </div>
         </div>
 
         <div className="flex gap-2">
@@ -227,6 +246,7 @@ export default function CreateTodo({ onTodoCreated, defaultCategoryId }: CreateT
                 scheduled_date: '',
                 priority: '',
                 timer_preset_minutes: '',
+                estimated_time_minutes: '',
               })
             }}
             className="cursor-pointer rounded-md px-4 py-2 font-medium text-gray-300"
