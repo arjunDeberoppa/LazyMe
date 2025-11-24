@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, startOfWeek, endOfWeek } from 'date-fns'
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, startOfWeek, endOfWeek, startOfDay, addWeeks, subWeeks } from 'date-fns'
 import type { Todo } from '@/types/database'
 
 interface CalendarViewProps {
@@ -18,7 +18,7 @@ export default function CalendarView({ onTodoSelect, onCreateTodo }: CalendarVie
 
   useEffect(() => {
     loadTodos()
-  }, [currentDate])
+  }, [currentDate, viewMode])
 
   const loadTodos = async () => {
     try {
@@ -27,15 +27,23 @@ export default function CalendarView({ onTodoSelect, onCreateTodo }: CalendarVie
       } = await supabase.auth.getUser()
       if (!user) return
 
-      const monthStart = startOfMonth(currentDate)
-      const monthEnd = endOfMonth(currentDate)
+      let startDate: Date
+      let endDate: Date
+
+      if (viewMode === 'week') {
+        startDate = startOfWeek(currentDate, { weekStartsOn: 0 })
+        endDate = endOfWeek(currentDate, { weekStartsOn: 0 })
+      } else {
+        startDate = startOfMonth(currentDate)
+        endDate = endOfMonth(currentDate)
+      }
 
       const { data } = await supabase
         .from('todos')
         .select('*')
         .eq('user_id', user.id)
-        .gte('scheduled_date', format(monthStart, 'yyyy-MM-dd'))
-        .lte('scheduled_date', format(monthEnd, 'yyyy-MM-dd'))
+        .gte('scheduled_date', format(startDate, 'yyyy-MM-dd'))
+        .lte('scheduled_date', format(endDate, 'yyyy-MM-dd'))
 
       if (data) setTodos(data)
     } catch (error) {
@@ -61,22 +69,40 @@ export default function CalendarView({ onTodoSelect, onCreateTodo }: CalendarVie
     }
   }
 
-  const monthStart = startOfMonth(currentDate)
-  const monthEnd = endOfMonth(currentDate)
-  const calendarStart = startOfWeek(monthStart)
-  const calendarEnd = endOfWeek(monthEnd)
-  const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd })
-
-  const handlePreviousMonth = () => {
-    setCurrentDate(subMonths(currentDate, 1))
+  const getDaysForView = () => {
+    if (viewMode === 'week') {
+      const weekStart = startOfWeek(currentDate, { weekStartsOn: 0 })
+      const weekEnd = endOfWeek(currentDate, { weekStartsOn: 0 })
+      return eachDayOfInterval({ start: weekStart, end: weekEnd })
+    } else {
+      const monthStart = startOfMonth(currentDate)
+      const monthEnd = endOfMonth(currentDate)
+      const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 })
+      const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 0 })
+      return eachDayOfInterval({ start: calendarStart, end: calendarEnd })
+    }
   }
 
-  const handleNextMonth = () => {
-    setCurrentDate(addMonths(currentDate, 1))
+  const days = getDaysForView()
+
+  const handlePrevious = () => {
+    if (viewMode === 'week') {
+      setCurrentDate(subWeeks(currentDate, 1))
+    } else {
+      setCurrentDate(subMonths(currentDate, 1))
+    }
+  }
+
+  const handleNext = () => {
+    if (viewMode === 'week') {
+      setCurrentDate(addWeeks(currentDate, 1))
+    } else {
+      setCurrentDate(addMonths(currentDate, 1))
+    }
   }
 
   const handleToday = () => {
-    setCurrentDate(new Date())
+    setCurrentDate(startOfDay(new Date()))
   }
 
   return (
@@ -106,7 +132,7 @@ export default function CalendarView({ onTodoSelect, onCreateTodo }: CalendarVie
           </div>
           <div className="flex items-center gap-2">
             <button
-              onClick={handlePreviousMonth}
+              onClick={handlePrevious}
               className="cursor-pointer rounded-md px-3 py-2 text-white"
               style={{ backgroundColor: '#242424' }}
             >
@@ -120,7 +146,7 @@ export default function CalendarView({ onTodoSelect, onCreateTodo }: CalendarVie
               Today
             </button>
             <button
-              onClick={handleNextMonth}
+              onClick={handleNext}
               className="cursor-pointer rounded-md px-3 py-2 text-white"
               style={{ backgroundColor: '#242424' }}
             >
@@ -128,7 +154,9 @@ export default function CalendarView({ onTodoSelect, onCreateTodo }: CalendarVie
             </button>
           </div>
           <h2 className="text-xl font-semibold text-white">
-            {format(currentDate, 'MMMM yyyy')}
+            {viewMode === 'week'
+              ? `${format(startOfWeek(currentDate, { weekStartsOn: 0 }), 'MMM d')} - ${format(endOfWeek(currentDate, { weekStartsOn: 0 }), 'MMM d, yyyy')}`
+              : format(currentDate, 'MMMM yyyy')}
           </h2>
         </div>
       </div>

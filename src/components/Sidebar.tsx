@@ -153,10 +153,16 @@ export default function Sidebar({
         </button>
       </div>
 
-      <div className="border-b p-2" style={{ borderColor: '#3a3a3a' }}>
+      <div className="border-b p-2 space-y-1" style={{ borderColor: '#3a3a3a' }}>
+        <a
+          href="/"
+          className="block rounded-md px-3 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 cursor-pointer"
+        >
+          🏠 Dashboard
+        </a>
         <a
           href="/calendar"
-          className="block rounded-md px-3 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800"
+          className="block rounded-md px-3 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 cursor-pointer"
         >
           📅 Calendar
         </a>
