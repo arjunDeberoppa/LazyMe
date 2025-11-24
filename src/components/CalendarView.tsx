@@ -8,9 +8,10 @@ import type { Todo } from '@/types/database'
 interface CalendarViewProps {
   onTodoSelect: (todoId: string) => void
   onCreateTodo: (date: Date) => void
+  onBackToDashboard?: () => void
 }
 
-export default function CalendarView({ onTodoSelect, onCreateTodo }: CalendarViewProps) {
+export default function CalendarView({ onTodoSelect, onCreateTodo, onBackToDashboard }: CalendarViewProps) {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [todos, setTodos] = useState<Todo[]>([])
   const [viewMode, setViewMode] = useState<'month' | 'week'>('month')
@@ -108,7 +109,19 @@ export default function CalendarView({ onTodoSelect, onCreateTodo }: CalendarVie
   return (
     <div className="flex h-full flex-col p-8">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-white">Calendar</h1>
+        <div className="flex items-center gap-3">
+          {onBackToDashboard && (
+            <button
+              onClick={onBackToDashboard}
+              className="cursor-pointer rounded-md p-2 text-white hover:opacity-80 transition-opacity"
+              style={{ backgroundColor: '#9a86ff' }}
+              title="Back to Dashboard"
+            >
+              ←
+            </button>
+          )}
+          <h1 className="text-3xl font-bold text-white">Calendar</h1>
+        </div>
         <div className="flex items-center gap-4">
           <div className="flex gap-2">
             <button
