@@ -96,11 +96,11 @@ export default function CategoryTodos({ categoryId, onTodoSelect, onUpdate }: Ca
       if (categoryError) throw categoryError
 
       toast.success('Category deleted successfully')
+      onUpdate()
       // Navigate back to dashboard after deletion
       if (typeof window !== 'undefined') {
         window.location.href = '/'
       }
-      onUpdate()
     } catch (error: any) {
       toast.error(error.message || 'Failed to delete category')
     }

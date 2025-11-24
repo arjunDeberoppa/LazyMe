@@ -159,7 +159,7 @@ export default function Sidebar({
         </div>
       </div>
 
-      <div className="border-t p-4" style={{ borderColor: '#3a3a3a' }}>
+      <div className="border-t p-2" style={{ borderColor: '#3a3a3a' }}>
         <button
           onClick={handleLogout}
           className="w-full cursor-pointer rounded-md px-3 py-2 text-sm text-gray-400 transition-colors hover:text-white hover:bg-gray-700"
