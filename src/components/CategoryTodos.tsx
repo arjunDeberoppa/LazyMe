@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { toast } from 'react-toastify'
 import type { Todo, Category } from '@/types/database'
 import DeleteConfirmModal from './DeleteConfirmModal'
+import CreateTodo from './CreateTodo'
 
 interface CategoryTodosProps {
   categoryId: string | null
@@ -95,6 +96,10 @@ export default function CategoryTodos({ categoryId, onTodoSelect, onUpdate }: Ca
       if (categoryError) throw categoryError
 
       toast.success('Category deleted successfully')
+      // Navigate back to dashboard after deletion
+      if (typeof window !== 'undefined') {
+        window.location.href = '/'
+      }
       onUpdate()
     } catch (error: any) {
       toast.error(error.message || 'Failed to delete category')
@@ -155,8 +160,8 @@ export default function CategoryTodos({ categoryId, onTodoSelect, onUpdate }: Ca
 
   return (
     <div className="p-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div className="flex items-center gap-4">
+      <div className="mb-6 flex items-center justify-between w-full">
+        <div className="flex items-center gap-4 justify-between w-full">
           <h1
             className="text-3xl font-bold text-white px-4 py-2 rounded-md"
             style={{ backgroundColor: category.color || '#9a86ff' }}
@@ -178,6 +183,10 @@ export default function CategoryTodos({ categoryId, onTodoSelect, onUpdate }: Ca
             Delete Category
           </button>
         </div>
+      </div>
+
+      <div className="mb-6">
+        <CreateTodo onTodoCreated={() => { loadData(); onUpdate(); }} defaultCategoryId={categoryId} />
       </div>
 
       {todos.length === 0 ? (

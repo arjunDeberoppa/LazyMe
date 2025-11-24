@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import type { Category } from '@/types/database'
 import CategoryModal from './CategoryModal'
 
@@ -26,6 +26,7 @@ export default function Sidebar({
   const [showCategoryModal, setShowCategoryModal] = useState(false)
   const supabase = createClient()
   const router = useRouter()
+  const pathname = usePathname()
 
   useEffect(() => {
     loadData()
@@ -77,12 +78,6 @@ export default function Sidebar({
     >
       <div className="flex items-center justify-between border-b p-4" style={{ borderColor: '#3a3a3a' }}>
         <h1 className="text-xl font-bold text-white">LazyMe</h1>
-        <button
-          onClick={handleLogout}
-          className="cursor-pointer rounded px-2 py-1 text-sm text-gray-400 hover:text-white"
-        >
-          Logout
-        </button>
       </div>
 
       <div className="border-b p-2 space-y-1" style={{ borderColor: '#3a3a3a' }}>
@@ -133,31 +128,44 @@ export default function Sidebar({
               +
             </button>
           </div>
-          {categories.map((category, index) => (
-            <button
-              key={category.id}
-              onClick={() => {
-                onCategorySelect(category.id)
-                onTodoSelect(null)
-              }}
-              className={`mb-1 w-full cursor-pointer rounded-md px-3 py-2 text-left text-sm transition-colors ${
-                selectedCategoryId === category.id
-                  ? 'text-white'
-                  : 'text-gray-400 hover:text-white'
-              }`}
-              style={
-                selectedCategoryId === category.id
-                  ? {
-                      backgroundColor: category.color || getAccentColor(index),
-                      color: '#ffffff',
-                    }
-                  : {}
-              }
-            >
-              {category.name}
-            </button>
-          ))}
+          {categories.map((category, index) => {
+            const isSelected = selectedCategoryId === category.id || pathname === `/category/${category.id}`
+            return (
+              <button
+                key={category.id}
+                onClick={() => {
+                  router.push(`/category/${category.id}`)
+                  onCategorySelect(category.id)
+                  onTodoSelect(null)
+                }}
+                className={`mb-1 w-full cursor-pointer rounded-md px-3 py-2 text-left text-sm transition-colors ${
+                  isSelected
+                    ? 'text-white'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+                style={
+                  isSelected
+                    ? {
+                        backgroundColor: category.color || getAccentColor(index),
+                        color: '#ffffff',
+                      }
+                    : {}
+                }
+              >
+                {category.name}
+              </button>
+            )
+          })}
         </div>
+      </div>
+
+      <div className="border-t p-4" style={{ borderColor: '#3a3a3a' }}>
+        <button
+          onClick={handleLogout}
+          className="w-full cursor-pointer rounded-md px-3 py-2 text-sm text-gray-400 transition-colors hover:text-white hover:bg-gray-700"
+        >
+          Logout
+        </button>
       </div>
 
       <CategoryModal
