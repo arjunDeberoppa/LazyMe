@@ -174,58 +174,104 @@ export default function CalendarView({ onTodoSelect, onCreateTodo }: CalendarVie
           ))}
         </div>
 
-        <div className="grid grid-cols-7 gap-px">
-          {days.map((day, idx) => {
-            const dayTodos = getTodosForDate(day)
-            const isCurrentMonth = isSameMonth(day, currentDate)
-            const isToday = isSameDay(day, new Date())
+        {viewMode === 'week' ? (
+          <div className="grid grid-cols-7 gap-px">
+            {days.map((day, idx) => {
+              const dayTodos = getTodosForDate(day)
+              const isToday = isSameDay(day, new Date())
 
-            return (
-              <div
-                key={idx}
-                className="min-h-24 p-2"
-                style={{
-                  backgroundColor: isCurrentMonth ? '#2b2b2b' : '#1a1a1a',
-                  borderRight: idx % 7 !== 6 ? '1px solid #3a3a3a' : 'none',
-                  borderBottom: idx < days.length - 7 ? '1px solid #3a3a3a' : 'none',
-                }}
-              >
+              return (
                 <div
-                  className={`mb-1 text-sm font-medium ${
-                    isCurrentMonth ? 'text-white' : 'text-gray-600'
-                  } ${isToday ? 'rounded-full bg-blue-500 px-2 py-1 text-white' : ''}`}
-                  style={isToday ? {} : {}}
+                  key={idx}
+                  className="min-h-96 p-4"
+                  style={{
+                    backgroundColor: '#2b2b2b',
+                    borderRight: idx < 6 ? '1px solid #3a3a3a' : 'none',
+                  }}
                 >
-                  {format(day, 'd')}
-                </div>
-                <div className="space-y-1">
-                  {dayTodos.slice(0, 3).map((todo) => (
+                  <div
+                    className={`mb-2 text-sm font-medium ${
+                      isToday ? 'rounded-full bg-blue-500 px-2 py-1 text-white' : 'text-white'
+                    }`}
+                  >
+                    {format(day, 'EEE d')}
+                  </div>
+                  <div className="space-y-2">
+                    {dayTodos.map((todo) => (
+                      <button
+                        key={todo.id}
+                        onClick={() => onTodoSelect(todo.id)}
+                        className="block w-full cursor-pointer rounded px-2 py-1 text-left text-xs text-white transition-colors hover:opacity-80"
+                        style={{ backgroundColor: getStatusColor(todo.status) }}
+                        title={todo.title}
+                      >
+                        {todo.title}
+                      </button>
+                    ))}
                     <button
-                      key={todo.id}
-                      onClick={() => onTodoSelect(todo.id)}
-                      className="block w-full cursor-pointer truncate rounded px-2 py-1 text-left text-xs text-white transition-colors hover:opacity-80"
-                      style={{ backgroundColor: getStatusColor(todo.status) }}
-                      title={todo.title}
+                      onClick={() => onCreateTodo(day)}
+                      className="mt-2 cursor-pointer text-xs text-gray-500 hover:text-white"
                     >
-                      {todo.title}
+                      + Add
                     </button>
-                  ))}
-                  {dayTodos.length > 3 && (
-                    <div className="text-xs text-gray-400">
-                      +{dayTodos.length - 3} more
-                    </div>
-                  )}
+                  </div>
                 </div>
-                <button
-                  onClick={() => onCreateTodo(day)}
-                  className="mt-1 cursor-pointer text-xs text-gray-500 hover:text-white"
+              )
+            })}
+          </div>
+        ) : (
+          <div className="grid grid-cols-7 gap-px">
+            {days.map((day, idx) => {
+              const dayTodos = getTodosForDate(day)
+              const isCurrentMonth = isSameMonth(day, currentDate)
+              const isToday = isSameDay(day, new Date())
+
+              return (
+                <div
+                  key={idx}
+                  className="min-h-24 p-2"
+                  style={{
+                    backgroundColor: isCurrentMonth ? '#2b2b2b' : '#1a1a1a',
+                    borderRight: idx % 7 !== 6 ? '1px solid #3a3a3a' : 'none',
+                    borderBottom: idx < days.length - 7 ? '1px solid #3a3a3a' : 'none',
+                  }}
                 >
-                  + Add
-                </button>
-              </div>
-            )
-          })}
-        </div>
+                  <div
+                    className={`mb-1 text-sm font-medium ${
+                      isCurrentMonth ? 'text-white' : 'text-gray-600'
+                    } ${isToday ? 'rounded-full bg-blue-500 px-2 py-1 text-white' : ''}`}
+                  >
+                    {format(day, 'd')}
+                  </div>
+                  <div className="space-y-1">
+                    {dayTodos.slice(0, 3).map((todo) => (
+                      <button
+                        key={todo.id}
+                        onClick={() => onTodoSelect(todo.id)}
+                        className="block w-full cursor-pointer truncate rounded px-2 py-1 text-left text-xs text-white transition-colors hover:opacity-80"
+                        style={{ backgroundColor: getStatusColor(todo.status) }}
+                        title={todo.title}
+                      >
+                        {todo.title}
+                      </button>
+                    ))}
+                    {dayTodos.length > 3 && (
+                      <div className="text-xs text-gray-400">
+                        +{dayTodos.length - 3} more
+                      </div>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => onCreateTodo(day)}
+                    className="mt-1 cursor-pointer text-xs text-gray-500 hover:text-white"
+                  >
+                    + Add
+                  </button>
+                </div>
+              )
+            })}
+          </div>
+        )}
       </div>
 
       <div className="mt-6 flex items-center gap-4">
