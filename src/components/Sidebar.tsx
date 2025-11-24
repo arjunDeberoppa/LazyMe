@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { toast } from 'react-toastify'
-import type { Category, Todo } from '@/types/database'
+import type { Category } from '@/types/database'
 import CategoryModal from './CategoryModal'
 
 interface SidebarProps {
@@ -12,6 +11,7 @@ interface SidebarProps {
   onCategorySelect: (categoryId: string | null) => void
   selectedTodoId: string | null
   onTodoSelect: (todoId: string | null) => void
+  onCategoryDeleted?: () => void
 }
 
 export default function Sidebar({
@@ -19,9 +19,9 @@ export default function Sidebar({
   onCategorySelect,
   selectedTodoId,
   onTodoSelect,
+  onCategoryDeleted,
 }: SidebarProps) {
   const [categories, setCategories] = useState<Category[]>([])
-  const [todos, setTodos] = useState<Todo[]>([])
   const [loading, setLoading] = useState(true)
   const [showCategoryModal, setShowCategoryModal] = useState(false)
   const supabase = createClient()
@@ -34,60 +34,6 @@ export default function Sidebar({
   const handleCategoryCreated = () => {
     loadData()
     router.refresh()
-  }
-
-  const handleDeleteCategory = async (categoryId: string, categoryName: string) => {
-    if (!confirm(`Are you sure you want to delete "${categoryName}"? This will also remove all todos in this category.`)) {
-      return
-    }
-
-    try {
-      const { error } = await supabase
-        .from('categories')
-        .delete()
-        .eq('id', categoryId)
-
-      if (error) throw error
-
-      toast.success('Category deleted successfully')
-      loadData()
-      router.refresh()
-      
-      // Clear selection if deleted category was selected
-      if (selectedCategoryId === categoryId) {
-        onCategorySelect(null)
-      }
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to delete category')
-    }
-  }
-
-  const handleDeleteTodo = async (todoId: string, todoTitle: string, e: React.MouseEvent) => {
-    e.stopPropagation()
-    
-    if (!confirm(`Are you sure you want to delete "${todoTitle}"?`)) {
-      return
-    }
-
-    try {
-      const { error } = await supabase
-        .from('todos')
-        .delete()
-        .eq('id', todoId)
-
-      if (error) throw error
-
-      toast.success('Todo deleted successfully')
-      loadData()
-      router.refresh()
-      
-      // Clear selection if deleted todo was selected
-      if (selectedTodoId === todoId) {
-        onTodoSelect(null)
-      }
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to delete todo')
-    }
   }
 
   const loadData = async () => {
@@ -105,16 +51,6 @@ export default function Sidebar({
         .order('created_at', { ascending: true })
 
       if (categoriesData) setCategories(categoriesData)
-
-      // Load todos
-      const { data: todosData } = await supabase
-        .from('todos')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('due_time', { ascending: true, nullsFirst: false })
-        .order('created_at', { ascending: false })
-
-      if (todosData) setTodos(todosData)
     } catch (error) {
       console.error('Error loading data:', error)
     } finally {
@@ -128,10 +64,6 @@ export default function Sidebar({
     router.push('/login')
     router.refresh()
   }
-
-  const filteredTodos = selectedCategoryId
-    ? todos.filter((todo) => todo.category_id === selectedCategoryId)
-    : todos
 
   const getAccentColor = (index: number) => {
     const colors = ['#ff68a6', '#ff7800', '#9a86ff', '#01eab9', '#01aaff']
@@ -202,80 +134,29 @@ export default function Sidebar({
             </button>
           </div>
           {categories.map((category, index) => (
-            <div key={category.id} className="mb-1 flex items-center gap-1 group">
-              <button
-                onClick={() => {
-                  onCategorySelect(category.id)
-                  onTodoSelect(null)
-                }}
-                className={`flex-1 cursor-pointer rounded-md px-3 py-2 text-left text-sm transition-colors ${
-                  selectedCategoryId === category.id
-                    ? 'text-white'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-                style={
-                  selectedCategoryId === category.id
-                    ? {
-                        backgroundColor: category.color || getAccentColor(index),
-                        color: '#ffffff',
-                      }
-                    : {}
-                }
-              >
-                {category.name}
-              </button>
-              <button
-                onClick={() => handleDeleteCategory(category.id, category.name)}
-                className="cursor-pointer opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 px-2 transition-opacity"
-                title="Delete category"
-              >
-                ×
-              </button>
-            </div>
-          ))}
-        </div>
-
-        <div>
-          <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500">Todos</h2>
-          {loading ? (
-            <div className="text-sm text-gray-500">Loading...</div>
-          ) : filteredTodos.length === 0 ? (
-            <div className="text-sm text-gray-500">No todos</div>
-          ) : (
-            <div className="space-y-1">
-              {filteredTodos.map((todo) => (
-                <div key={todo.id} className="flex items-center gap-1 group">
-                  <button
-                    onClick={() => onTodoSelect(todo.id)}
-                    className={`flex-1 cursor-pointer rounded-md px-3 py-2 text-left text-sm transition-colors ${
-                      selectedTodoId === todo.id
-                        ? 'text-white'
-                        : 'text-gray-400 hover:text-white'
-                    }`}
-                    style={
-                      selectedTodoId === todo.id
-                        ? { backgroundColor: '#242424' }
-                        : {}
+            <button
+              key={category.id}
+              onClick={() => {
+                onCategorySelect(category.id)
+                onTodoSelect(null)
+              }}
+              className={`mb-1 w-full cursor-pointer rounded-md px-3 py-2 text-left text-sm transition-colors ${
+                selectedCategoryId === category.id
+                  ? 'text-white'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+              style={
+                selectedCategoryId === category.id
+                  ? {
+                      backgroundColor: category.color || getAccentColor(index),
+                      color: '#ffffff',
                     }
-                  >
-                    <div className="truncate">{todo.title}</div>
-                    {todo.due_time && (
-                      <div className="text-xs text-gray-500">
-                        {new Date(todo.due_time).toLocaleDateString()}
-                      </div>
-                    )}
-                  </button>
-                  <button
-                    onClick={(e) => handleDeleteTodo(todo.id, todo.title, e)}
-                    className="cursor-pointer opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 px-2 transition-opacity"
-                    title="Delete todo"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
+                  : {}
+              }
+            >
+              {category.name}
+            </button>
+          ))}
         </div>
       </div>
 
